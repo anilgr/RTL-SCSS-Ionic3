@@ -1,0 +1,296 @@
+<ion-header>
+  <ion-navbar color="primary" hideBackButton="true">
+    <button ion-button icon-only menuToggle>
+         <ion-icon name="menu"></ion-icon>
+        </button>
+    <ion-title>
+      New Message 
+    </ion-title>
+    <ion-buttons end>
+      <button ion-button icon-end (click)="goback()">
+      CANCEL
+    </button>
+      <!--<button ion-button  (click)="sendMessage()">
+        SEND  <ion-icon name="send"></ion-icon>
+      </button>-->
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+<ion-content class="gray-content">
+  <ion-searchbar [(ngModel)]="searchKey" (ionInput)="getItems()" [hidden]="!canMessageEmployees && !canMessageStudents && !canMessageParents"></ion-searchbar>
+  <ion-segment [(ngModel)]="tab" [hidden]="search">
+    <ion-segment-button value="recent" (click)="loadQuickContacts()" [hidden]="!showFrequent || singleTab">
+      Frequent
+    </ion-segment-button>
+    <ion-segment-button value="employees" (click)="loadDepartments()" [hidden]="!canMessageEmployees || singleTab">
+      Employees 
+    </ion-segment-button>
+    <ion-segment-button value="students" (click)="loadBatches()" [hidden]="!canMessageStudents || singleTab">
+      Students
+    </ion-segment-button>
+    <ion-segment-button value="parents" (click)="loadParentsBatches()" [hidden]="!canMessageParents || singleTab">
+      Parents
+    </ion-segment-button>
+                                     <!--DIRECT CONTACTS-->
+    <ion-segment-button value="students_contacts"  [hidden]="hideStudentContacts || singleTab">
+      Students
+    </ion-segment-button>
+    <ion-segment-button value="teachers_contacts"  [hidden]="hideTeacherContacts || singleTab">
+      Teachers
+    </ion-segment-button>
+
+  </ion-segment>
+  <ion-list [hidden]="!search">
+    <div class="no-results"><h2 [hidden]="hideNoResults">No results</h2></div>
+    <ion-item *ngFor="let contact of searchResults" (click)="composeMessage(contact.profile)" >
+      <ion-avatar item-left>
+        <img src="{{contact.profile.profilePhoto}}">
+      </ion-avatar>
+      <h2><span class="lng-txt-brk
+        ">{{contact.profile.fullName}}</span></h2>
+      <p>{{contact.profile.tagLine}}</p>
+    </ion-item>
+  </ion-list>
+  <div class="contacts-header" *ngIf="singleTab">
+    <h3>Quick Contacts</h3>  
+  </div>
+  <div [ngSwitch]="tab" [hidden]="search">
+                                    <!--LISTING CONTACTS --> 
+        <div *ngSwitchCase="'students_contacts'" >                             
+          <ion-list >
+            <ion-item *ngFor="let contact of contacts.students" (click)="composeMessage(contact.profile)" >
+              <ion-avatar item-left>
+                <img src="{{contact.profile.profilePhoto}}">
+              </ion-avatar>
+              <h2><span class="lng-txt-brk
+                ">{{contact.profile.fullName}}</span></h2>
+              <p>{{contact.role}}</p>
+            </ion-item>
+            <div class="empty-state" *ngIf="contacts.students?.length==0">
+                <h2>Students are not added to this batch yet</h2>
+            </div>
+          </ion-list>
+        </div>  
+        <div *ngSwitchCase="'teachers_contacts'" >                             
+          <ion-list >
+            <ion-item *ngFor="let contact of contacts.teachers" (click)="composeMessage(contact.profile)" >
+              <ion-avatar item-left>
+                <img src="{{contact.profile.profilePhoto}}">
+              </ion-avatar>
+              <h2><span class="lng-txt-brk
+                ">{{contact.profile.fullName}}</span></h2>
+              <p>{{contact.role}}</p>
+            </ion-item>
+          </ion-list>
+          <div class="help-box" *ngIf="admin">
+            <h3>Help</h3>
+            <p>Feel free to contact the admin for help</p>
+          </div>
+          <div class="footer-list" *ngIf="admin">
+            <ion-item  (click)="composeMessage(admin_p.profile)" *ngFor="let admin_p of admin">
+              <ion-avatar item-left>
+                <img [src]="admin_p.profile.profilePhoto">
+              </ion-avatar>
+              <h2><span class="lng-txt-brk
+                ">{{admin_p.profile.fullName}}</span></h2>
+              <p>{{admin_p.role}}</p>
+            </ion-item>
+          </div>
+        </div>
+
+                                  <!-- RECENT TAB CONTENT BEGINS HERE -->
+    <div *ngIf="showFrequent">
+        <div *ngSwitchCase="'recent'" >  
+          <ion-list >
+            <ion-item *ngFor="let contact of quickContacts" (click)="composeMessage(contact.profile)" >
+              <ion-avatar item-left *ngIf="contact.profile.profilePhoto">
+                
+                <img src="{{contact.profile.profilePhoto}}">
+              </ion-avatar> 
+              
+              <ion-avatar item-left *ngIf="!contact.profile.profilePhoto">
+                
+                  <ion-icon class="chat-picture-bc" name="person" ></ion-icon>
+                </ion-avatar>
+              <h2>{{contact.profile.fullName}}</h2>
+              <p>{{contact.profile.tagLine}}</p>
+            </ion-item>
+          </ion-list>
+          <div [hidden]="!hideTeacherContacts">
+            <div class="help-box" *ngIf="admin">
+            <h3>Help</h3>
+            <p>Feel free to contact the admin for help</p>
+          </div>
+          <div class="footer-list" *ngIf="admin">
+            <ion-item  (click)="composeMessage(admin_p.profile)" *ngFor="let admin_p of admin">
+              <ion-avatar item-left>
+                <img [src]="admin_p.profile.profilePhoto">
+              </ion-avatar>
+              <h2><span class="lng-txt-brk
+                ">{{admin_p.profile.fullName}}</span></h2>
+              <p>{{admin_p.role}}</p>
+            </ion-item>
+          </div>
+          </div>
+        </div>  
+      </div>  
+      <div *ngIf="!showFrequent&&!canMessageStudents&&!canMessageParents&&!canMessageEmployees">
+        <div class="contacts-header" *ngIf="quickContacts?.length>0">
+              <h3>Quick Contacts</h3>
+            </div>
+          <ion-list *ngIf="quickContacts?.length>0">
+            <ion-item *ngFor="let contact of quickContacts" (click)="composeMessage(contact.profile)" >
+              <ion-avatar item-left>
+                <img src="{{contact.profile.profilePhoto}}">
+              </ion-avatar>
+              <h2><span class="lng-txt-brk
+                ">{{contact.profile.fullName}}</span></h2>
+              <p>{{contact.role}}</p>
+            </ion-item>
+          </ion-list>
+          <div [hidden]="!hideTeacherContacts">
+            <div class="help-box" *ngIf="admin">
+            <h3>Help</h3>
+            <p>Feel free to contact the admin for help</p>
+          </div>
+          <div class="footer-list" *ngIf="admin">
+            <ion-item  (click)="composeMessage(admin_p.profile)" *ngFor="let admin_p of admin">
+              <ion-avatar item-left>
+                <img [src]="admin_p.profile.profilePhoto">
+              </ion-avatar>
+              <h2><span class="lng-txt-brk
+                ">{{admin_p.profile.fullName}}</span></h2>
+              <p>{{admin_p.role}}</p>
+            </ion-item>
+          </div>
+          </div>
+      </div>  
+                                  <!-- EMPLOYEES TAB CONTENT BEGINS HERE -->
+    <div *ngSwitchCase="'employees'">   
+      <div class="item-select">
+        <ion-item >
+          <ion-label>
+           <span class="fl-ds">Department</span> 
+            <span class="fl-ds dep-width" >
+          <ion-select [(ngModel)]="selectedDepartment" (ngModelChange)='loadEmployees(true)'>
+            <ion-option *ngFor="let department of departments" [value]="department">{{department.name}}</ion-option>
+         
+          </ion-select>
+        </span>
+          </ion-label>
+          <!-- <ion-select  [(ngModel)]="selectedDepartment" (ngModelChange)='loadEmployees(true)'>
+            <ion-option *ngFor="let department of departments" [value]="department">{{department.name}}</ion-option>
+         
+          </ion-select> -->
+        </ion-item>
+      </div>
+     
+      <ion-list [hidden]="role!='employee'">
+        <ion-item  (click)="composeMessage(employees,'employees')" >
+          <ion-avatar item-left>
+           <ion-icon name="people"></ion-icon>
+          </ion-avatar>
+          <h2><span class="lng-txt-brk
+            ">Broadcast to all employees</span></h2>
+          <p>{{employees?.length}} employees</p>
+        </ion-item>
+      </ion-list>    
+      
+      <ion-list class="chat-contacts">
+        <h3>Employees</h3>
+        <ion-item *ngFor="let employee of employees" (click)="composeMessage(employee)" >
+          <ion-avatar item-left>
+            <img src="{{employee.profilePhoto}}">
+          </ion-avatar>
+          <h2><span class="lng-txt-brk
+            ">{{employee.fullName}}</span></h2>
+          <p>{{employee.tagLine}}</p>
+        </ion-item>
+      </ion-list>
+    </div>  
+                                  <!-- STUDENTS TAB CONTENT BEGINS HERE -->
+    <div *ngSwitchCase="'students'">    
+      <div class="item-select">
+        <ion-item >
+          <ion-label>
+              <span class="fl-ds" >Course-Batch</span>
+              <span class="fl-ds dep-width" >
+                  <ion-select [(ngModel)]="selectedBatch" (ngModelChange)='loadStudents(true)'>
+                      <ion-option *ngFor="let batch of batches" [value]="batch">{{batch.fullName}}</ion-option>
+                    </ion-select>
+              </span>
+            </ion-label>
+          <!-- <ion-select [(ngModel)]="selectedBatch" (ngModelChange)='loadStudents(true)'>
+            <ion-option *ngFor="let batch of batches" [value]="batch">{{batch.full_name}}</ion-option>
+          </ion-select> -->
+        </ion-item>
+        
+      </div>               
+      <ion-list [hidden]="role!='employee'"> 
+        <ion-item  (click)="composeMessage(students,'students')" >
+          <ion-avatar item-left>
+            <ion-icon name="people"></ion-icon>
+          </ion-avatar>
+          <h2><span class="lng-txt-brk
+            ">Broadcast to all students</span></h2>
+          <p>{{students?.length}} students</p>
+        </ion-item>
+      </ion-list>                    
+      <ion-list class="chat-contacts">
+        <h3>Students</h3>
+        <ion-item *ngFor="let student of students" (click)="composeMessage(student)">
+          <ion-avatar item-left>
+            <img src="{{student.profilePhoto}}">
+          </ion-avatar>
+          <h2><span class="lng-txt-brk
+            ">{{student.fullName}}</span></h2>
+          <p>{{student.tagLine}}</p>
+        </ion-item>
+      </ion-list>
+    </div>  
+                                    <!-- PARENTS TAB CONTENT BEGINS HERE -->
+    <div *ngSwitchCase="'parents'">     
+      
+      <div class="item-select">
+        <ion-item >
+          <ion-label>
+              <span class="fl-ds" >Course-Batch</span>
+              <span class="fl-ds dep-width" >
+                <ion-select [(ngModel)]="selectedParentsBatch" (ngModelChange)='loadParents(true)'>
+                  <ion-option *ngFor="let parents_batch of parentsBatches" [value]="parents_batch">{{parents_batch.fullName}}</ion-option>
+                </ion-select>
+              </span>
+          </ion-label>
+          <!-- <ion-select [(ngModel)]="selectedParentsBatch" (ngModelChange)='loadParents(true)'>
+            <ion-option *ngFor="let parents_batch of parentsBatches" [value]="parents_batch">{{parents_batch.full_name}}</ion-option>
+          </ion-select> -->
+        </ion-item>
+        
+      </div>                           
+      <ion-list [hidden]="role!='employee'">
+        <ion-item  (click)="composeMessage(parents,'parents')" >
+          <ion-avatar item-left>
+            <ion-icon name="people"></ion-icon>
+          </ion-avatar>
+          <h2><span class="lng-txt-brk
+            ">Broadcast to all parents</span></h2>
+          <p>{{parents?.length}} parents</p>
+        </ion-item>
+      </ion-list>                    
+      <ion-list class="chat-contacts">
+        <h3>Parents</h3>
+        <ion-item *ngFor="let parent of parents" (click)="composeMessage(parent,'parents')">
+          <ion-avatar item-left>
+              <ion-icon class="chat-picture-bc" name="person"></ion-icon>
+            <!-- <img src="{{parent.profile_photo}}"> -->
+          </ion-avatar>
+          <h2><span class="lng-txt-brk
+            ">{{parent.fullName}}</span></h2>
+          <p>{{parent.tagLine}}</p>
+        </ion-item>
+      </ion-list>               
+    </div>
+  </div>
+                                  
+                               
+</ion-content>

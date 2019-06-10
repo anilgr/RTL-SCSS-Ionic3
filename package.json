@@ -1,0 +1,14 @@
+{
+  "name": "extractor",
+  "version": "1.0.0",
+  "description": "tool to extract translation strings from html to json",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "anil gr",
+  "license": "ISC",
+  "dependencies": {
+    "clarinet": "^0.12.1"
+  }
+}

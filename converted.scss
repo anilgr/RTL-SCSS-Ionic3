@@ -1,0 +1,118 @@
+page-messages {
+    .header-md::after,
+    .tabs-md[tabsPlacement='top']>.tabbar::after,
+    .footer-md::before,
+    .tabs-md[tabsPlacement='bottom']>.tabbar::before {
+        background-image: none !important;
+    }
+    .segment-md .segment-button {
+        font-weight: normal !important;
+    }
+    .segment-button {
+        font-weight: 0 !important;
+        border-color: $theme-primary-color !important;
+    }
+    .segment-button.segment-activated {
+        font-weight: 600 !important;
+        border-bottom-width: 5px;
+        border-color: #fff !important;
+    }
+    h4 {
+        font-size: 14px;
+        color: $color-black-dark;
+        overflow: hidden;
+    }
+    .chat-picture {
+        border-radius: 50%;
+        width: 40px;
+        @include float(start);
+    }
+    .chat-picture-bc {
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+        font-size: 24px;
+        color: #fff;
+        background: $color-black-medium;
+        @include text-align('center');
+        @include float(start);
+        @include padding(8px, 8px, 8px, 8px);
+    }
+    .chat-info-read {
+        h2 {
+            font-weight: normal !important;
+        }
+        h3 {
+            font-weight: normal !important;
+        }
+    }
+    .chat-subtitle {
+        display: block;
+        text-overflow: ellipsis;
+        word-wrap: break-word;
+        overflow: hidden;
+        max-height: 32px !important;
+        line-height: 16px;
+    }
+    .chat-info {
+        width: 65%;
+        h2 {
+            font-weight: 600;
+            font-size: 16px;
+            white-space: normal;
+            overflow: hidden;
+            max-height: 40px;
+        }
+        h3 {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        h4 {
+            position: relative;
+            font-size: 14px;
+            color: $color-black-dark;
+            white-space: normal;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            max-height: 36px;
+        }
+        .label-md {
+            @include margin(16px, 16px, 16px, 0);
+        }
+        .last-message-timestamp {
+            position: absolute;
+            font-size: 12px;
+            color: $color-black-dark;
+            @include position(null, 16px, 10px, null);
+        }
+        .last-message-timestamp-bc {
+            position: absolute;
+            font-size: 12px;
+            color: $color-black-dark;
+            @include position(45px, 16px, null, null);
+        }
+        .last-message-count {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            position: absolute;
+            font-size: 12px;
+            color: #fff;
+            background: $theme-primary-color;
+            @include text-align('center');
+            @include padding(5px, null, null, null);
+            @include position(16px, 16px, null, null);
+        }
+        ion-thumbnail {
+            ion-icon {
+                display: inline-block;
+                font-size: 40px;
+                color: #bfbfbf;
+            }
+        }
+        @include float(start);
+        @include margin(null, null, null, 16px);
+    }
+}
